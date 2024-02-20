@@ -2,6 +2,7 @@ new Vue({
     el: '#app',
     data() {
         return {
+            fileList: [],//文件列表
             followid:'',
             tableData:[],
             dialogVisible: false,
@@ -232,7 +233,6 @@ new Vue({
                             offset: 300
                         });
                     } else{
-
                         newthis.$message.error('Im sorry delete error !');
                     }
                 },
@@ -241,6 +241,38 @@ new Vue({
                     return false;
                 }
             });
+        },
+        //导入 excel
+        importExcel(){
+            let newthis = this;
+            //判断files数组的长度是否大于0，不大于0 则未选择附件
+            if (this.$refs.upload.uploadFiles.length == 0) {
+                newthis.$message({
+                    message: '请选择需要上传的文件',
+                    type: 'error'
+                });
+                newthis.up = true;
+                return false;
+            }
+            var name = this.$refs.upload.uploadFiles[0].name;
+            var index = name.lastIndexOf(".")
+            var res = name.substring(index, name.length);
+            if (res!=".xlsx" && res!=".xls" ) {
+                newthis.$message({
+                    message: '该文件非Excel文件,或后缀非xlsx',
+                    type: 'error'
+                });
+                return false;
+            }
+            this.$refs.upload.submit();
+            this.listData();
+
+        },
+        handleRemove(file, fileList) {
+            console.log(file, fileList);
+        },
+        handlePreview(file) {
+            console.log(file);
         },
     }
 })

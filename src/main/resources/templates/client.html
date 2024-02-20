@@ -14,7 +14,7 @@
 <div id="app">
     <el-row>
         <el-col :span="24"><div class="grid-content bg-purple-dark" style="text-align: center;"><el-link type="" style="font-size: 35px;" disabled>客户跟进帮助系统</el-link></div>
-            <div style="text-align: center;color: darkred; font-size: 15px;"> 注意：凡超72小时未跟进的客户系统会自动提示标签名字和跟进指示会变红</div>
+            <div style="text-align: center;color: #e82c49; font-size: 15px;"> 注意：凡超72小时未跟进的客户系统会自动提示标签名字和跟进指示会变红</div>
         </el-col>
     </el-row><br><br>
     <!-- 搜索栏目-->
@@ -41,16 +41,30 @@
                             </el-select>
                         </el-form-item>
                     </div></el-col>
-                    <el-col :span="4"><div class="grid-content bg-purple-light" style="text-align: right"><el-button type="primary" @click="Search">Search</el-button><el-button type="success" @click="addclient">add client</el-button></div></el-col>
+                    <el-col :span="8"><div class="grid-content bg-purple-light" style="text-align: right"><el-button type="primary" @click="Search">Search</el-button><el-button type="success" @click="addclient">add client</el-button>
+                        <br> <br> <el-upload
+                                ref="upload"
+                                action="/dr"
+                                :on-preview="handlePreview"
+                                :on-remove="handleRemove"
+                                :file-list="fileList"
+                                :auto-upload="false">
+
+                            <el-button slot="trigger" size=""style="background-color: #601934;text-align: right;border: #601934;color: #FFFFFF">选取文件</el-button>
+                            <el-button size="" style="background-color: #66a4f3;border: #66a4f3;text-align: right;color: #FFFFFF" @click="importExcel">
+                                开始导入
+                            </el-button>
+                        </el-upload></div></el-col>
                 </el-row>
             </el-form>
-    </el-row>
-
+    </el-row><br>
     <!--列表-->
             <template>
                 <el-table
                         :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
                         :sort-by = "{prop: 'flag', order: 'descending'}"
+                        border
+                        height="500"
                         style="width: 100%">
                     <!--<el-table-column
                             label="FISTTIME"
@@ -67,7 +81,7 @@
                             label="跟进指示"
                             prop="flag"
                             sortable
-                            width="100">
+                            width="120">
                         <template slot-scope="scope">
                             <span  v-if="scope.row.flag ==='1'" style="color: #ef0a47;">待跟进</span>
                             <span  v-if="scope.row.flag ==='2'" style="color: #0a0801;">正常</span>
@@ -108,7 +122,7 @@
                     <el-table-column
                             label="PHONE"
                             prop="phone"
-                            width="150">
+                            width="130">
                     </el-table-column>
                     <el-table-column
                             label="额度"
@@ -129,7 +143,7 @@
                         </template>
                     </el-table-column>
                     <el-table-column
-                            align="right"  width="200"><!--
+                            align="right" fixed="right" width="200"><!--
                         <template slot="header" slot-scope="scope" >
                             <el-input
                                     v-model="search"
@@ -167,7 +181,7 @@
             </template>
     <!-- add new client page-->
     <el-dialog
-            title="add client"
+            title="follow client"
             :visible.sync="gjdialogVisible"
             width="40%">
         <el-form ref="formc" :model="formc" label-width="150px">

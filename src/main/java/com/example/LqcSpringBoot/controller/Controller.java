@@ -2,23 +2,21 @@ package com.example.LqcSpringBoot.controller;
 
 import com.example.LqcSpringBoot.mapper.ClientMapper;
 import com.example.LqcSpringBoot.model.Client;
-import org.apache.poi.hssf.record.FormatRecord;
+import com.example.LqcSpringBoot.ut.MainPartimportBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import sun.text.resources.FormatData;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 跳转page
@@ -26,6 +24,8 @@ import java.util.concurrent.TimeUnit;
  */
 @org.springframework.stereotype.Controller
 public class Controller {
+    @Autowired
+    private MainPartimportBean mainPartimportBean;
     @Autowired
     private ClientMapper clientMapper;
 
@@ -114,7 +114,19 @@ public class Controller {
         return clientMapper.selectBytj((String) client.getName(), (String) client.getPhone(),(String) client.getXydj(),(String) client.getSsxs());
     }
 
-
+    /**
+     * 导入
+     * @return
+     */
+    @RequestMapping("/dr")
+    public String dr (HttpServletRequest request, @RequestParam(required = false) MultipartFile file ) throws IOException {
+        InputStream fileInputStream = null;
+        fileInputStream = file.getInputStream();
+        mainPartimportBean.insertDB(fileInputStream);
+        request.getSession().setAttribute("message", "导入成功");
+        request.getSession().setAttribute("url", "container/shouye");
+        return String.format("redirect:/message");
+    }
 
 
 
