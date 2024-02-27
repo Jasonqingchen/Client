@@ -14,9 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * 跳转page
@@ -28,6 +26,36 @@ public class Controller {
     private MainPartimportBean mainPartimportBean;
     @Autowired
     private ClientMapper clientMapper;
+
+
+
+
+    @RequestMapping("/selectByid")
+    @ResponseBody
+    public List<Client> selectByid(Client client) {
+        List<Client> list = new ArrayList();
+       Client cli = clientMapper.selectById(client.getId());
+        list.add(cli);
+        return  list;
+    }
+
+    /**
+     * 后台保存
+     */
+    @RequestMapping("/tjdata")
+    @ResponseBody
+    public Map tjdata() {
+        Map map = new HashMap();
+        Integer A = clientMapper.selectTjdataA();
+        Integer B = clientMapper.selectTjdataB();
+        Integer C = clientMapper.selectTjdataC();
+        Integer D = clientMapper.selectTjdataD();
+        map.put("A",A);
+        map.put("B",B);
+        map.put("C",C);
+        map.put("D",D);
+        return map;
+    }
 
     /**
      * 跳转
@@ -61,6 +89,7 @@ public class Controller {
         cl.setBz(client.getBz());
         cl.setGjdate(formatter.format(new Date()));
         cl.setFlag("2");
+        cl.setBalance(client.getBalance());
         return clientMapper.updateById(cl);
     }
 

@@ -2,11 +2,61 @@
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="">
-    <title>Good Life Client</title>
+    <title>Client</title>
     <!-- 引入样式 -->
     <link rel="stylesheet" href="/vue/element-ui.min.css">
+    <link rel="stylesheet" href="/vue/base.css">
 </head>
 <style>
+    .transition-box {
+        margin-bottom: 2px;
+        width: 250px;
+        height: 100px;
+        border-radius: 4px;
+        background-color: #055d2b;
+        text-align: center;
+        color: #fff;
+        padding: 10px 20px;
+        box-sizing: border-box;
+        margin-right: 190px;
+    }
+    .transition-boxs {
+        margin-bottom: 2px;
+        width: 200px;
+        height: 100px;
+        border-radius: 4px;
+        background-color: #e56f27;
+        text-align: center;
+        color: #fff;
+        padding: 10px 20px;
+        box-sizing: border-box;
+        margin-right: 190px;
+    }
+    .transition-boxss {
+        margin-bottom: 2px;
+        width: 200px;
+        height: 100px;
+        border-radius: 4px;
+        background-color: #66a4f3;
+        text-align: center;
+        color: #fff;
+        padding: 10px 20px;
+        box-sizing: border-box;
+        margin-right: 190px;
+    }
+    .transition-boxo {
+        margin-bottom: 2px;
+        width: 200px;
+        height: 100px;
+        border-radius: 4px;
+        background-color: #cd53ef;
+        text-align: center;
+        color: #fff;
+        padding: 10px 20px;
+        box-sizing: border-box;
+        margin-right: 190px;
+    }
+
 </style>
 <body>
 <!--html代码 -->
@@ -17,6 +67,45 @@
             <div style="text-align: center;color: #e82c49; font-size: 15px;"> 注意：凡超72小时未跟进的客户系统会自动提示标签名字和跟进指示会变红</div>
         </el-col>
     </el-row><br><br>
+
+    <!--<template>
+        <div style="text-align: center;">
+            <div style="display: flex; margin-top: 20px; height: 100px;">
+                <transition name="el-fade-in-linear">
+                    <Strong><div v-show="show" class="transition-box">follow persons now <br> <span style="font-size: 35px;">12</span></div></Strong>
+                </transition>
+                <transition name="el-fade-in">
+                    <Strong><div v-show="show" class="transition-boxs">CLIENTS TOTAL<br> <span style="font-size: 35px;">22</span></div></Strong>
+                </transition>
+                <transition name="el-fade-in">
+                    <Strong><div v-show="show" class="transition-boxss">BALANCE TOTAL<br> <span style="font-size: 35px;">22</span></div></Strong>
+                </transition>
+            </div>
+        </div>
+    </template>-->
+    <el-row :gutter="20">
+        <el-col :span="6">
+            <transition name="el-zoom-in-center">
+                    <Strong><div v-show="show" class="transition-box">FOLLOW PERSONS NOW<br> <span style="font-size: 35px;" id="a">00</span></div></Strong>
+            </transition>
+            <div class="grid-content bg-purple"></div></el-col>
+        <el-col :span="6"><div class="grid-content bg-purple">
+            <transition name="el-zoom-in-center">
+                <Strong><div v-show="show" class="transition-boxss">BALANCE TOTAL<br> <span style="font-size: 35px;" id="b">00</span></div></Strong>
+            </transition>
+        </div></el-col>
+        <el-col :span="6"><div class="grid-content bg-purple">
+            <transition name="el-zoom-in-center">
+                <Strong><div v-show="show" class="transition-boxs">CLIENTS TOTAL<br> <span style="font-size: 35px;" id="c">00</span></div></Strong>
+            </transition>
+        </div></el-col>
+        <el-col :span="6"><div class="grid-content bg-purple">
+            <transition name="el-zoom-in-center">
+                <Strong><div v-show="show" class="transition-boxo">PEYMENTS PEOPLE TOTAL<br> <span style="font-size: 35px;" id="d">00</span></div></Strong>
+            </transition>
+        </div></el-col>
+    </el-row>
+    <br><br>
     <!-- 搜索栏目-->
             <el-form ref="forms" :model="forms" label-width="100px">
                 <el-row>
@@ -37,7 +126,7 @@
                             <el-select v-model="forms.ssxs" placeholder="请选择销售员" clearable>
                                 <el-option label="anna" value="anna"></el-option>
                                 <el-option label="jason" value="jason"></el-option>
-                                <el-option label="裤子" value="裤子"></el-option>
+                                <el-option label="Other" value="Other"></el-option>
                             </el-select>
                         </el-form-item>
                     </div></el-col>
@@ -50,9 +139,9 @@
                                 :file-list="fileList"
                                 :auto-upload="false">
 
-                            <el-button slot="trigger" size=""style="background-color: #601934;text-align: right;border: #601934;color: #FFFFFF">选取文件</el-button>
+                            <el-button slot="trigger" size=""style="background-color: #601934;text-align: right;border: #601934;color: #FFFFFF">SELECT FILE</el-button>
                             <el-button size="" style="background-color: #66a4f3;border: #66a4f3;text-align: right;color: #FFFFFF" @click="importExcel">
-                                开始导入
+                                IMPORT
                             </el-button>
                         </el-upload></div></el-col>
                 </el-row>
@@ -125,6 +214,14 @@
                             width="130">
                     </el-table-column>
                     <el-table-column
+                            label="BALANCE"
+                            prop="blance"
+                            width="100">
+                        <template slot-scope="scope">
+                            <span style="color: #930707;"><strong>{{scope.row.balance}}</strong></span>
+                        </template>
+                    </el-table-column>
+                    <el-table-column
                             label="额度"
                             prop="ed"
                             width="100">
@@ -184,10 +281,13 @@
             title="follow client"
             :visible.sync="gjdialogVisible"
             width="40%">
-        <el-form ref="formc" :model="formc" label-width="150px">
+        <el-form ref="formd" :model="formd" label-width="150px">
 
+            <el-form-item label="欠款">
+                <el-input v-model="formd.balance"></el-input>
+            </el-form-item>
             <el-form-item label="跟进说明">
-                <el-input type="textarea" v-model="formc.bz"></el-input>
+                <el-input type="textarea" v-model="formd.bz"></el-input>
             </el-form-item>
         </el-form>
 
@@ -207,7 +307,7 @@
                 <el-select v-model="formc.ssxs" placeholder="请选择销售员">
                     <el-option label="Anna" value="Anna"></el-option>
                     <el-option label="Jason" value="Jason"></el-option>
-                    <el-option label="裤子" value="裤子"></el-option>
+                    <el-option label="Other" value="Other"></el-option>
                 </el-select>
             </el-form-item>
             <el-form-item label="Client Name">
@@ -218,6 +318,9 @@
             </el-form-item>
             <el-form-item label="欠款额度">
                 <el-input v-model="formc.ed"></el-input>
+            </el-form-item>
+            <el-form-item label="欠款">
+                <el-input v-model="formc.balance"></el-input>
             </el-form-item>
             <el-form-item label="SEX">
                 <el-select v-model="formc.sex" placeholder="select sex please">

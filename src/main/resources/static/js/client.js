@@ -2,6 +2,7 @@ new Vue({
     el: '#app',
     data() {
         return {
+            show: false,
             fileList: [],//文件列表
             followid:'',
             tableData:[],
@@ -16,7 +17,12 @@ new Vue({
                 xydj:'',
                 ssxs:''
             },
+            formd:{
+                bz:'',
+                balance:''
+            },
             formc:{
+                balance:'',
                 email:'',
                 sex:'',
                 ssxs:'',
@@ -49,6 +55,8 @@ new Vue({
 
     //初始化
     mounted: function () {
+        setTimeout(this.delayedExecution, 1000);
+
         var newthis = this;
         /* 初始查询 */
         var url = '/listdata';
@@ -65,10 +73,32 @@ new Vue({
             }
         });
 
+        //统计数据
+        var urldata = '/tjdata';
+        $.ajax({
+            type: 'POST',
+            url: urldata,
+            dataType: 'json',
+            success: function (result) {
+                document.getElementById("c").innerText = result.A;
+                document.getElementById("b").innerText = result.B+' $';
+               document.getElementById("a").innerText = result.C;
+               document.getElementById("d").innerText = result.D;
+
+            },
+            error: function () {
+                console.log('error submit!!');
+                return false;
+            }
+        });
+
 
     },
     //方法事件
     methods: {
+        delayedExecution(){
+            this.show = true;
+        },
         //条件搜索
         Search(){
             //获取form表单个项目值
@@ -108,12 +138,13 @@ new Vue({
         //跟进方法
         follow(){
             //获取form表单个项目值
-            var addForm = this.formc;
+            var addForm = this.formd;
 
             var newthis = this;
             var d={
                 'id':newthis.followid,
                 'bz': addForm.bz,
+                'balance': addForm.balance,
             }
             var url = '/follow';
             $.ajax({
@@ -129,6 +160,22 @@ new Vue({
                             type: 'success',
                             offset: 300
                         });
+                        //统计数据
+                        var urldata = '/tjdata';
+                        $.ajax({
+                            type: 'POST',
+                            url: urldata,
+                            dataType: 'json',
+                            success: function (result) {
+                                document.getElementById("b").innerText = result.B;
+                                document.getElementById("d").innerText = result.D;
+
+                            },
+                            error: function () {
+                                console.log('error submit!!');
+                                return false;
+                            }
+                        });
                         newthis.gjdialogVisible = false;
                     } else {
                         newthis.$message.error('Im sorry submit error !');
@@ -142,8 +189,28 @@ new Vue({
         },
         //跟进说明
         gj(id){
+            //回显数据
             this.gjdialogVisible = true;
+            let newthis = this;
+            var url = '/selectByid';
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {'id':id},
+                dataType: 'json',
+                success: function (result) {
+                    newthis.formd.balance = result[0].balance;
+                    newthis.formd.bz = result[0].bz;
+                },
+                error: function () {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
             this.followid = id;
+
+
+
         },
         // 初始页currentPage、初始每页数据数pagesize和数据data
         handleSizeChange: function (size) {
@@ -167,6 +234,7 @@ new Vue({
                 'email': addForm.email,
                 'sex': addForm.sex,
                 'ed': addForm.ed,
+                'balance': addForm.balance,
                 'phone': addForm.phone,
                 'name': addForm.name,
                 'address': addForm.address,

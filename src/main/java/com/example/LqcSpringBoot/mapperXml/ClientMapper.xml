@@ -35,5 +35,17 @@
     </if>
 
   </select>
-
+  <!--查询数据-->
+<select id="selectTjdataA" resultType="java.lang.Integer">
+  SELECT count(1) as a from client
+</select>
+  <select id="selectTjdataB" resultType="java.lang.Integer">
+    SELECT sum(balance) as b from client
+  </select>
+  <select id="selectTjdataC" resultType="java.lang.Integer">
+    SELECT count(1) as c from client where flag =1;
+  </select>
+  <select id="selectTjdataD" resultType="java.lang.Integer">
+    SELECT count(1) from client where balance!=0
+  </select>
 </mapper>
