@@ -19,5 +19,6 @@ public interface ClientMapper extends BaseMapper<Client> {
     Integer selectTjdataB();
     Integer selectTjdataC();
     Integer selectTjdataD();
+    List<Map<String,Object>> selectGroupAddess();
 
 }

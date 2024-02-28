@@ -2,6 +2,7 @@ new Vue({
     el: '#app',
     data() {
         return {
+            tjclient:[],
             show: false,
             fileList: [],//文件列表
             followid:'',
@@ -92,10 +93,130 @@ new Vue({
             }
         });
 
+        //客户分布比例
+        newthis.khfb();
+        newthis.wzshm();
+
 
     },
     //方法事件
     methods: {
+        wzshm(){
+            var chartDom = document.getElementById('f');
+            var myChart = echarts.init(chartDom);
+            var option;
+
+            option = {
+                graphic: {
+                    elements: [
+                        {
+                            type: 'text',
+                            left: '',
+                            top: 'center',
+                            style: {
+                                text: 'Client distribution ',
+                                fontSize: 80,
+                                fontWeight: 'bold',
+                                lineDash: [0, 200],
+                                lineDashOffset: 0,
+                                fill: 'transparent',
+                                stroke: '#efc3c3',
+                                lineWidth: 1
+                            },
+                            keyframeAnimation: {
+                                duration: 3000,
+                                loop: true,
+                                keyframes: [
+                                    {
+                                        percent: 0.7,
+                                        style: {
+                                            fill: 'transparent',
+                                            lineDashOffset: 200,
+                                            lineDash: [200, 0]
+                                        }
+                                    },
+                                    {
+                                        // Stop for a while.
+                                        percent: 0.8,
+                                        style: {
+                                            fill: 'transparent'
+                                        }
+                                    },
+                                    {
+                                        percent: 1,
+                                        style: {
+                                            fill: 'black'
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }
+            };
+             myChart.setOption(option);
+
+        },
+
+        //客户分布
+        khfb(){
+
+            //统计数据
+            var urldata = '/tjclient';
+            $.ajax({
+                type: 'POST',
+                url: urldata,
+                dataType: 'json',
+                success: function (result) {
+                    var chartDom = document.getElementById('e');
+                    var myChart = echarts.init(chartDom);
+                    var option;
+                    option = {
+                        title: {
+                            text: 'Customer distribution',
+                            subtext: 'Data',
+                            left: 'center'
+                        },
+                        tooltip: {
+                            trigger: 'item'
+                        },
+                        legend: {
+                            orient: 'vertical',
+                            left: 'left'
+                        },
+                        series: [
+                            {
+                                name: 'Access From',
+                                type: 'pie',
+                                radius: '50%',
+                                data:  result ,
+                                emphasis: {
+                                    itemStyle: {
+                                        shadowBlur: 10,
+                                        shadowOffsetX: 0,
+                                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                    }
+                                }
+                            }
+                        ]
+                    };
+                    myChart.setOption(option);
+
+                },
+                error: function () {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+
+
+
+
+
+        },
+
+
+
         delayedExecution(){
             this.show = true;
         },
@@ -167,7 +288,7 @@ new Vue({
                             url: urldata,
                             dataType: 'json',
                             success: function (result) {
-                                document.getElementById("b").innerText = result.B;
+                                document.getElementById("b").innerText = result.B+'$';
                                 document.getElementById("d").innerText = result.D;
 
                             },

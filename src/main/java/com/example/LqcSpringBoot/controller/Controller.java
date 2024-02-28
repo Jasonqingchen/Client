@@ -28,7 +28,16 @@ public class Controller {
     private ClientMapper clientMapper;
 
 
-
+    /**
+     * 统计数据客户分布
+     * @return
+     */
+    @RequestMapping("/tjclient")
+    @ResponseBody
+    public List<Map<String,Object>> tjclient(){
+        List<Map<String, Object>> maps = clientMapper.selectGroupAddess();
+        return maps;
+    }
 
     @RequestMapping("/selectByid")
     @ResponseBody

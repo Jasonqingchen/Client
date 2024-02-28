@@ -22,7 +22,7 @@
     }
     .transition-boxs {
         margin-bottom: 2px;
-        width: 200px;
+        width: 250px;
         height: 100px;
         border-radius: 4px;
         background-color: #e56f27;
@@ -34,7 +34,7 @@
     }
     .transition-boxss {
         margin-bottom: 2px;
-        width: 200px;
+        width: 250px;
         height: 100px;
         border-radius: 4px;
         background-color: #66a4f3;
@@ -46,7 +46,7 @@
     }
     .transition-boxo {
         margin-bottom: 2px;
-        width: 200px;
+        width: 250px;
         height: 100px;
         border-radius: 4px;
         background-color: #cd53ef;
@@ -89,11 +89,13 @@
                     <Strong><div v-show="show" class="transition-box">FOLLOW PERSONS NOW<br> <span style="font-size: 35px;" id="a">00</span></div></Strong>
             </transition>
             <div class="grid-content bg-purple"></div></el-col>
-        <el-col :span="6"><div class="grid-content bg-purple">
+        <el-col :span="6">
+            <div class="grid-content bg-purple">
             <transition name="el-zoom-in-center">
                 <Strong><div v-show="show" class="transition-boxss">BALANCE TOTAL<br> <span style="font-size: 35px;" id="b">00</span></div></Strong>
             </transition>
-        </div></el-col>
+        </div>
+        </el-col>
         <el-col :span="6"><div class="grid-content bg-purple">
             <transition name="el-zoom-in-center">
                 <Strong><div v-show="show" class="transition-boxs">CLIENTS TOTAL<br> <span style="font-size: 35px;" id="c">00</span></div></Strong>
@@ -104,11 +106,21 @@
                 <Strong><div v-show="show" class="transition-boxo">PEYMENTS PEOPLE TOTAL<br> <span style="font-size: 35px;" id="d">00</span></div></Strong>
             </transition>
         </div></el-col>
+    </el-row><br>
+    <el-row :gutter="20">
+        <el-col :span="6"><div class="grid-content bg-purple" style="text-align: center">
+            <transition name="el-zoom-in-center">
+                <Strong><div v-show="show" class="" id="e" style="width: 500px; height: 350px;"></div></Strong>
+            </transition>
+        </div></el-col>
+        <el-col :span="18"><div class="grid-content bg-purple" style="text-align: right">
+            <div style="height: 350px; width: 700px; text-align: right" id="f">
+            </div>
+        </div></el-col>
     </el-row>
-    <br><br>
     <!-- 搜索栏目-->
             <el-form ref="forms" :model="forms" label-width="100px">
-                <el-row>
+                <el-row :gutter="20">
                     <el-col :span="4"><div class="grid-content bg-purple">
                         <el-form-item label="Client Name">
                             <el-input v-model="forms.name" clearable></el-input>
@@ -130,20 +142,26 @@
                             </el-select>
                         </el-form-item>
                     </div></el-col>
-                    <el-col :span="8"><div class="grid-content bg-purple-light" style="text-align: right"><el-button type="primary" @click="Search">Search</el-button><el-button type="success" @click="addclient">add client</el-button>
-                        <br> <br> <el-upload
-                                ref="upload"
-                                action="/dr"
-                                :on-preview="handlePreview"
-                                :on-remove="handleRemove"
-                                :file-list="fileList"
-                                :auto-upload="false">
+                    <el-col :span="4">
+                        <div class="grid-content bg-purple-light" style="text-align: right">
+                            <el-button type="primary" @click="Search">Search</el-button>
+                            <el-button type="success" @click="addclient">add client</el-button>
+                        </div></el-col>
+                    <el-col :span="4">
+                        <div class="grid-content bg-purple-light" style="text-align: left">
+                            <el-upload
+                                    ref="upload"
+                                    action="/dr"
+                                    :on-preview="handlePreview"
+                                    :on-remove="handleRemove"
+                                    :file-list="fileList"
+                                    :auto-upload="false">
 
-                            <el-button slot="trigger" size=""style="background-color: #601934;text-align: right;border: #601934;color: #FFFFFF">SELECT FILE</el-button>
-                            <el-button size="" style="background-color: #66a4f3;border: #66a4f3;text-align: right;color: #FFFFFF" @click="importExcel">
-                                IMPORT
-                            </el-button>
-                        </el-upload></div></el-col>
+                                <el-button slot="trigger" size=""style="background-color: #601934;text-align: right;border: #601934;color: #FFFFFF">SELECT FILE</el-button>
+                                <el-button size="" style="background-color: #66a4f3;border: #66a4f3;text-align: right;color: #FFFFFF" @click="importExcel">
+                                    IMPORT
+                                </el-button>
+                            </el-upload></div></el-col>
                 </el-row>
             </el-form>
     </el-row><br>
