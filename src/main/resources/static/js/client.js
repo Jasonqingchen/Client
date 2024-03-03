@@ -2,15 +2,30 @@ new Vue({
     el: '#app',
     data() {
         return {
+            ordercid:'',
+            orderdlog:false,
+            gjtetail:false,
             tjclient:[],
             show: false,
             fileList: [],//文件列表
             followid:'',
             tableData:[],
+            tableDatafollow:[],
             dialogVisible: false,
             gjdialogVisible: false,
             currentPage: 1, //初始页
             pagesize: 100,    //    每页的数据
+            formorder:{
+                ssxs:'',
+                date:''
+            },
+            formo:{
+                name:'',
+                money:'',
+                blance:'',
+                bz:'',
+                pay:''
+            },
             forms:{
                 phone:'',
                 name:'',
@@ -56,8 +71,10 @@ new Vue({
 
     //初始化
     mounted: function () {
-        setTimeout(this.delayedExecution, 1000);
 
+        this.xsblac();
+        this.sale();
+        setTimeout(this.delayedExecution, 1000);
         var newthis = this;
         /* 初始查询 */
         var url = '/listdata';
@@ -96,8 +113,6 @@ new Vue({
         //客户分布比例
         newthis.khfb();
         newthis.wzshm();
-
-
     },
     //方法事件
     methods: {
@@ -256,6 +271,60 @@ new Vue({
             let dt = new Date(d)
             return dt.getFullYear() + '-' + (dt.getMonth() + 1) + '-' + dt.getDate()
         },
+        //add order
+        addorder(){
+            var newthis = this;
+            newthis.$confirm('Are you sure add order?', '', {
+                confirmButtonText: 'YES',
+                cancelButtonText: 'NO',
+                type: 'warning'
+            }).then(() => {
+              var  oform = newthis.formo;
+                var d={
+                    'cid':newthis.ordercid,
+                    'bz': oform.bz,
+                    'balance': oform.balance,
+                    'money': oform.money,
+                    'pay': oform.pay,
+                }
+                $.ajax({
+                    type: 'POST',
+                    url: '/addorder',
+                    data:d,
+                    dataType: 'json',
+                    success: function (result) {
+                        if(result==1){
+                            newthis.sale();
+                            newthis.xsblac();
+                            newthis.$notify({
+                                title: 'add order success!',
+                                type: 'success',
+                                offset: 300
+                            });
+                            newthis.orderdlog = false;
+                        } else{
+                            newthis.$message.error('Im sorry add order error !');
+                        }
+                    },
+                    error: function () {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                });
+
+
+            }).catch(() => {
+                newthis.$notify.error({
+                    title: '取消删除',
+                    message: '取消删除！'
+                });
+            });
+        },
+        //新订单
+        getorder(id){
+            this.orderdlog = true;
+            this.ordercid = id;
+        },
         //跟进方法
         follow(){
             //获取form表单个项目值
@@ -407,7 +476,13 @@ new Vue({
         },
         //删除
         rowDelete(val){
+
             var newthis = this;
+            newthis.$confirm('Are you sure delete this?', '', {
+                confirmButtonText: 'yes',
+                cancelButtonText: 'no',
+                type: 'warning'
+            }).then(() => {
             $.ajax({
                 type: 'POST',
                 url: '/delete',
@@ -430,6 +505,15 @@ new Vue({
                     return false;
                 }
             });
+
+
+        }).catch(() => {
+                newthis.$notify.error({
+        title: '取消删除',
+        message: '取消删除！'
+    });
+});
+
         },
         //导入 excel
         importExcel(){
@@ -463,5 +547,189 @@ new Vue({
         handlePreview(file) {
             console.log(file);
         },
+
+        //打开并获得数据 跟进详情
+        gjxq(row, column, cell, event){
+            this.gjtetail = true;
+            let newthis = this;
+            $.ajax({
+                type: 'POST',
+                url: '/detail',
+                data:{id:row.id},
+                dataType: 'json',
+                success: function (result) {
+                    newthis.tableDatafollow = result;
+                },
+                error: function () {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+        },
+        sale(){
+
+            var f = this.formorder;
+
+            let newthis = this;
+            var d={
+                'date': f.date,
+                'ssxs': f.ssxs
+            }
+            $.ajax({
+                type: 'POST',
+                url: '/getxsdate',
+                data:d,
+                dataType: 'json',
+                success: function (result) {
+                    var chartDom = document.getElementById('sa');
+                    var myChart = echarts.init(chartDom);
+                    var option;
+
+                    const colors = ['#5470C6', '#91CC75', '#EE6666'];
+                    option = {
+                        color: colors,
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'cross'
+                            }
+                        },
+                        grid: {
+                            right: '20%'
+                        },
+                        toolbox: {
+                            feature: {
+                                dataView: { show: true, readOnly: false },
+                                restore: { show: true },
+                                saveAsImage: { show: true }
+                            }
+                        },
+                        legend: {
+                            data: ['Sales', 'Balance', 'Number of orders']
+                        },
+                        xAxis: [
+                            {
+                                type: 'category',
+                                axisTick: {
+                                    alignWithLabel: true
+                                },
+                                // prettier-ignore
+                                data: result[0]
+                            }
+                        ],
+                        yAxis: [
+                            {
+                                type: 'value',
+                                name: 'Sales',
+                                position: 'right',
+                                alignTicks: true,
+                                axisLine: {
+                                    show: true,
+                                    lineStyle: {
+                                        color: colors[0]
+                                    }
+                                },
+                                axisLabel: {
+                                    formatter: '{value} $'
+                                }
+                            },
+                            {
+                                type: 'value',
+                                name: 'Balance',
+                                position: 'right',
+                                alignTicks: true,
+                                offset: 80,
+                                axisLine: {
+                                    show: true,
+                                    lineStyle: {
+                                        color: colors[1]
+                                    }
+                                },
+                                axisLabel: {
+                                    formatter: '{value} $'
+                                }
+                            },
+                            {
+                                type: 'value',
+                                name: 'Number of orders',
+                                position: 'left',
+                                alignTicks: true,
+                                axisLine: {
+                                    show: true,
+                                    lineStyle: {
+                                        color: colors[2]
+                                    }
+                                },
+                                axisLabel: {
+                                    formatter: '{value}/次'
+                                }
+                            }
+                        ],
+                        series: [
+                            {
+                                name: 'Sales',
+                                type: 'bar',
+                                data: result[1]
+                            },
+                            {
+                                name: 'Balance',
+                                type: 'bar',
+                                yAxisIndex: 1,
+                                data: result[2]
+                            },
+                            {
+                                name: 'Number of orders',
+                                type: 'line',
+                                yAxisIndex: 2,
+                                data: result[3]
+                            }
+                        ]
+                    };
+
+                    myChart.setOption(option);
+
+                },
+                error: function () {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+
+
+        },
+        xsblac(){
+            var f = this.formorder;
+            var d={
+                'date': f.date,
+                'ssxs': f.ssxs
+            }
+
+            var url = '/xsqk';
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: d,
+                dataType: 'json',
+                success: function (result) {
+                    if (result[0]==null){
+                        document.getElementById("qk").innerText="00";
+                        document.getElementById("xse").innerText="00";
+                    } else {
+                        document.getElementById("qk").innerText=result[0].balance;
+                        document.getElementById("xse").innerText=result[0].sales;
+                    }
+
+                },
+                error: function () {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+
+        },
+        Searchd(){
+            this.sale();
+            this.xsblac();
+        }
     }
 })

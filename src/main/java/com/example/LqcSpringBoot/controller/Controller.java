@@ -1,7 +1,11 @@
 package com.example.LqcSpringBoot.controller;
 
+import com.example.LqcSpringBoot.mapper.ClientFollowMapper;
 import com.example.LqcSpringBoot.mapper.ClientMapper;
+import com.example.LqcSpringBoot.mapper.OrderMapper;
 import com.example.LqcSpringBoot.model.Client;
+import com.example.LqcSpringBoot.model.Clientfollow;
+import com.example.LqcSpringBoot.model.Orders;
 import com.example.LqcSpringBoot.ut.MainPartimportBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,14 +31,88 @@ public class Controller {
     @Autowired
     private ClientMapper clientMapper;
 
+    @Autowired
+    private ClientFollowMapper clientFollowMapper;
+
+    @Autowired
+    private OrderMapper orderMapper;
+
+
+    /**
+     * 月统计数据
+     *
+     * @return
+     */
+        @RequestMapping("/xsqk")
+        @ResponseBody
+        public List<Map<String,Object>> xsqk(Orders order) {
+            return orderMapper.selectxsblance(order.getDate(),order.getSsxs());
+        }
+    /**
+     * 月统计数据
+     *
+     * @return
+     */
+    @RequestMapping("/getxsdate")
+    @ResponseBody
+    public List getxsdate(Orders order) {
+
+        if(order.getDate()=="" || order.getDate()==null){
+            SimpleDateFormat formatm = new SimpleDateFormat("MM");
+            order.setDate(formatm.format(new Date()));
+        }
+        List list = new ArrayList();
+        List name = orderMapper.selectDataByDateAndSsxs(order.getDate(),order.getSsxs());
+        List sales = orderMapper.selectDataByDateAndSsxssales(order.getDate(),order.getSsxs());
+        List balance = orderMapper.selectDataByDateAndSsxsbalance(order.getDate(),order.getSsxs());
+        List numorder = orderMapper.selectDataByDateAndSsxsnumorder(order.getDate(),order.getSsxs());
+        list.add(name);
+        list.add(sales);
+        list.add(balance);
+        list.add(numorder);
+        return list;
+    }
+
+    /**
+     * 新订单
+     *
+     * @return
+     */
+    @RequestMapping("/addorder")
+    @ResponseBody
+    public Integer addorder(Orders order) {
+        Client client = clientMapper.selectById(order.getCid());
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat formatm = new SimpleDateFormat("MM");
+        order.setId(UUID.randomUUID().toString());
+        order.setDate(formatter.format(new Date()));
+        order.setSsxs(client.getSsxs());
+        order.setMonth(formatm.format(new Date()));
+        order.setName(client.getName());
+        order.setBalance(String.valueOf(Integer.parseInt(order.getMoney())-Integer.parseInt(order.getPay())));
+         return orderMapper.insert(order);
+    }
+
+    /**
+     * 跟进详情
+     *
+     * @return
+     */
+    @RequestMapping("/detail")
+    @ResponseBody
+    public List<Clientfollow> detail(Client client) {
+        List<Clientfollow> clientfollow = clientFollowMapper.selectByCid(client.getId());
+        return clientfollow;
+    }
 
     /**
      * 统计数据客户分布
+     *
      * @return
      */
     @RequestMapping("/tjclient")
     @ResponseBody
-    public List<Map<String,Object>> tjclient(){
+    public List<Map<String, Object>> tjclient() {
         List<Map<String, Object>> maps = clientMapper.selectGroupAddess();
         return maps;
     }
@@ -43,9 +121,9 @@ public class Controller {
     @ResponseBody
     public List<Client> selectByid(Client client) {
         List<Client> list = new ArrayList();
-       Client cli = clientMapper.selectById(client.getId());
+        Client cli = clientMapper.selectById(client.getId());
         list.add(cli);
-        return  list;
+        return list;
     }
 
     /**
@@ -59,10 +137,10 @@ public class Controller {
         Integer B = clientMapper.selectTjdataB();
         Integer C = clientMapper.selectTjdataC();
         Integer D = clientMapper.selectTjdataD();
-        map.put("A",A);
-        map.put("B",B);
-        map.put("C",C);
-        map.put("D",D);
+        map.put("A", A);
+        map.put("B", B);
+        map.put("C", C);
+        map.put("D", D);
         return map;
     }
 
@@ -80,7 +158,7 @@ public class Controller {
     @RequestMapping("/addhtdata")
     @ResponseBody
     public Integer addhtdata(Client client) {
-        SimpleDateFormat  formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         client.setId(UUID.randomUUID().toString());
         client.setDate(formatter.format(new Date()));
         client.setGjdate(formatter.format(new Date()));
@@ -93,12 +171,22 @@ public class Controller {
     @RequestMapping("/follow")
     @ResponseBody
     public Integer follow(Client client) {
-        SimpleDateFormat  formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Client cl = clientMapper.selectById(client.getId());
         cl.setBz(client.getBz());
         cl.setGjdate(formatter.format(new Date()));
         cl.setFlag("2");
         cl.setBalance(client.getBalance());
+        Clientfollow cf = new Clientfollow();
+        cf.setCid(cl.getId());
+        cf.setName(cl.getName());
+        cf.setSex(cl.getSex());
+        cf.setBalance(cl.getBalance());
+        cf.setBz(cl.getBz());
+        cf.setId(UUID.randomUUID().toString());
+        cf.setSsxs(cl.getSsxs());
+        cf.setGjdate(cl.getGjdate());
+        clientFollowMapper.insert(cf);
         return clientMapper.updateById(cl);
     }
 
@@ -108,10 +196,10 @@ public class Controller {
     @RequestMapping("/listdata")
     @ResponseBody
     public List<Client> listdata() {
-        SimpleDateFormat  formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date date = new Date();
         List<Client> clients = clientMapper.selectList(null);
-        clients.forEach(cl->{
+        clients.forEach(cl -> {
             Date parse = null;
             try {
                 parse = formatter.parse(cl.getGjdate());
@@ -122,7 +210,7 @@ public class Controller {
             long time = date.getTime();
             long l = time - parse.getTime();
             long hours = l / 3600000;
-            if (hours>72){
+            if (hours > 72) {
                 cl.setFlag("1");
             } else {
                 cl.setFlag("2");
@@ -149,15 +237,16 @@ public class Controller {
     @ResponseBody
     public List<Client> seach(Client client) {
 
-        return clientMapper.selectBytj((String) client.getName(), (String) client.getPhone(),(String) client.getXydj(),(String) client.getSsxs());
+        return clientMapper.selectBytj((String) client.getName(), (String) client.getPhone(), (String) client.getXydj(), (String) client.getSsxs());
     }
 
     /**
      * 导入
+     *
      * @return
      */
     @RequestMapping("/dr")
-    public String dr (HttpServletRequest request, @RequestParam(required = false) MultipartFile file ) throws IOException {
+    public String dr(HttpServletRequest request, @RequestParam(required = false) MultipartFile file) throws IOException {
         InputStream fileInputStream = null;
         fileInputStream = file.getInputStream();
         mainPartimportBean.insertDB(fileInputStream);
@@ -165,8 +254,6 @@ public class Controller {
         request.getSession().setAttribute("url", "container/shouye");
         return String.format("redirect:/message");
     }
-
-
 
 
 }

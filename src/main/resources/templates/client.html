@@ -56,6 +56,9 @@
         box-sizing: border-box;
         margin-right: 190px;
     }
+    .customRow {
+        background-color: #2372e8; /* 这里设置了默认的背景颜色 */
+    }
 
 </style>
 <body>
@@ -64,7 +67,7 @@
 <div id="app">
     <el-row>
         <el-col :span="24"><div class="grid-content bg-purple-dark" style="text-align: center;"><el-link type="" style="font-size: 35px;" disabled>客户跟进帮助系统</el-link></div>
-            <div style="text-align: center;color: #e82c49; font-size: 15px;"> 注意：凡超72小时未跟进的客户系统会自动提示标签名字和跟进指示会变红</div>
+            <div style="text-align: center;color: #e82c49; font-size: 15px;"><strong>注意：凡超72小时未跟进的客户系统会自动提示标签名字和跟进指示会变红</strong> </div>
         </el-col>
     </el-row><br><br>
 
@@ -112,10 +115,36 @@
             <transition name="el-zoom-in-center">
                 <Strong><div v-show="show" class="" id="e" style="width: 500px; height: 350px;"></div></Strong>
             </transition>
-        </div></el-col>
-        <el-col :span="18"><div class="grid-content bg-purple" style="text-align: right">
-            <div style="height: 350px; width: 700px; text-align: right" id="f">
-            </div>
+        </div></el-col><br>
+        <el-col :span="17"><div class="grid-content bg-purple" style="text-align: right">
+
+            <el-form ref="formorder" :model="formorder" label-width="100px">
+                <el-row :gutter="20">
+                    <el-col :span="7"><div class="grid-content bg-purple">
+                        <el-form-item label="month">
+                            <el-date-picker
+                                    v-model="formorder.date"
+                                    type="month"
+                                    value-format="MM"
+                                    placeholder="选择月">
+                        </el-form-item></div></el-col>
+                    <el-col :span="7"><div class="grid-content bg-purple">
+                        <el-form-item label="所属销售">
+                            <el-select v-model="formorder.ssxs" placeholder="请选择销售员" clearable>
+                                <el-option label="anna" value="anna"></el-option>
+                                <el-option label="jason" value="jason"></el-option>
+                                <el-option label="Other" value="Other"></el-option>
+                            </el-select>
+                        </el-form-item>
+                    </div></el-col>
+                    <el-col :span="10">
+                        <div class="grid-content bg-purple-light" style="text-align: left">
+                            <el-button type="primary" @click="Searchd">Search</el-button>&nbsp;&nbsp;&nbsp;
+                            <span>本月总销售额：<strong style="color: darkred;font-size: 30px;"><span id="xse" >0000</span></strong>$<span> 欠款：<strong style="color: darkred;font-size: 30px;"><span id="qk" >000</span></strong>$</span></span>
+                        </div></el-col>
+                </el-row>
+            </el-form>
+            <div id="sa" style="height: 300px; width: 100%"></div>
         </div></el-col>
     </el-row>
     <!-- 搜索栏目-->
@@ -168,10 +197,13 @@
     <!--列表-->
             <template>
                 <el-table
+                        :cell-style="{ background: '#0DC4C2FF', color: '#000' }"
+                        :header-cell-style="{ background: '#0DC4C2FF', color: '#000' }"
                         :data="tableData.slice((currentPage-1)*pagesize,currentPage*pagesize)"
                         :sort-by = "{prop: 'flag', order: 'descending'}"
                         border
-                        height="500"
+                        @cell-dblclick="gjxq"
+                        height="800"
                         style="width: 100%">
                     <!--<el-table-column
                             label="FISTTIME"
@@ -258,7 +290,7 @@
                         </template>
                     </el-table-column>
                     <el-table-column
-                            align="right" fixed="right" width="200"><!--
+                            align="right" fixed="right" width="300"><!--
                         <template slot="header" slot-scope="scope" >
                             <el-input
                                     v-model="search"
@@ -277,6 +309,10 @@
                                     size="mini"
                                     type="primary"
                                     @click="gj(scope.row.id)">Follow</el-button>
+                            <el-button
+                                    size="mini"
+                                    type="warning"
+                                    @click="getorder(scope.row.id)">new Order</el-button>
                         </template>
                     </el-table-column>
                 </el-table>
@@ -294,6 +330,67 @@
                     </el-pagination>
                 </div>
             </template>
+    <!-- follow tetail-->
+    <el-dialog
+            title="follow tetail"
+            :visible.sync="gjtetail"
+            width="60%">
+        <template>
+            <el-table
+                    :data="tableDatafollow"
+                    border
+                    height="400"
+                    style="width: 100%">
+                <el-table-column
+                        label="所属销售"
+                        prop="ssxs"
+                        width="100">
+                </el-table-column>
+                <el-table-column
+                        label="NAME"
+                        prop="name"
+                        width="200">
+                    <template slot-scope="scope">
+                        <el-tag
+                                :type="scope.row.flag === '1' ? 'danger' : ''"
+                                disable-transitions>{{scope.row.name}}</el-tag>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        label="SEX"
+                        prop="sex"
+                        width="60">
+                </el-table-column>
+                <el-table-column
+                        label="FollowDate"
+                        prop="gjdate"
+                        type="datetime"
+                        width="200">
+                </el-table-column>
+                <el-table-column
+                        label="BALANCE"
+                        prop="blance"
+                        width="100">
+                    <template slot-scope="scope">
+                        <span style="color: #930707;"><strong>{{scope.row.balance}}</strong></span>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        label="跟进说明"
+                        prop="bz"
+                        width="400">
+                    <template slot-scope="scope">
+                        <span style="color: #930707;">{{scope.row.bz}}</span>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </template>
+
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="gjtetail = false">return</el-button>
+        </span>
+    </el-dialog>
+
     <!-- add new client page-->
     <el-dialog
             title="follow client"
@@ -385,6 +482,30 @@
         <span slot="footer" class="dialog-footer">
             <el-button type="primary" @click="onSubmit">Add Client</el-button>
     <el-button @click="dialogVisible = false">return</el-button>
+  </span>
+    </el-dialog>
+
+    <!-- get new order-->
+    <el-dialog
+            title="New Order"
+            :visible.sync="orderdlog"
+            width="40%">
+        <el-form ref="formo" :model="formo" label-width="150px">
+
+            <el-form-item label="支付金额">
+                <el-input v-model="formo.pay"></el-input>
+            </el-form-item>
+            <el-form-item label="跟进说明">
+                <el-input type="textarea" v-model="formo.bz"></el-input>
+            </el-form-item>
+            <el-form-item label="订单金额">
+                <el-input v-model="formo.money"></el-input>
+            </el-form-item>
+        </el-form>
+
+        <span slot="footer" class="dialog-footer">
+            <el-button type="primary" @click="addorder">add order</el-button>
+    <el-button @click="orderdlog = false">return</el-button>
   </span>
     </el-dialog>
 
