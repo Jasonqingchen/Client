@@ -134,7 +134,7 @@ public class Controller {
     public Map tjdata() {
         Map map = new HashMap();
         Integer A = clientMapper.selectTjdataA();
-        Integer B = clientMapper.selectTjdataB();
+        Integer B = orderMapper.selectTjdataB();
         Integer C = clientMapper.selectTjdataC();
         Integer D = clientMapper.selectTjdataD();
         map.put("A", A);

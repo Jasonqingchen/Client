@@ -622,7 +622,6 @@ new Vue({
                                 type: 'value',
                                 name: 'Sales',
                                 position: 'right',
-                                alignTicks: true,
                                 axisLine: {
                                     show: true,
                                     lineStyle: {
@@ -637,7 +636,6 @@ new Vue({
                                 type: 'value',
                                 name: 'Balance',
                                 position: 'right',
-                                alignTicks: true,
                                 offset: 80,
                                 axisLine: {
                                     show: true,

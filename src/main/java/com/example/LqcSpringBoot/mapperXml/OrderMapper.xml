@@ -58,7 +58,7 @@
   </select>
   <!--查询数据-->
   <select id="selectxsblance" resultType="java.util.Map">
-    select sum(money)-sum(pay) as balance ,sum(money) as sales from orders   where 1=1
+    select sum(balance) as balance ,sum(money) as sales from orders   where 1=1
     <if test="month != null and month != ''">
       AND month =#{month}
     </if>
@@ -67,5 +67,7 @@
       AND ssxs =#{ssxs}
     </if>
   </select>
-
+  <select id="selectTjdataB" resultType="java.lang.Integer">
+    SELECT sum(balance) as b from orders
+  </select>
 </mapper>
