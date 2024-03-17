@@ -2,6 +2,7 @@ new Vue({
     el: '#app',
     data() {
         return {
+            ordersdetail:false,
             ordercid:'',
             orderdlog:false,
             gjtetail:false,
@@ -11,6 +12,7 @@ new Vue({
             followid:'',
             tableData:[],
             tableDatafollow:[],
+            tableDataorder:[],
             dialogVisible: false,
             gjdialogVisible: false,
             currentPage: 1, //初始页
@@ -728,6 +730,25 @@ new Vue({
         Searchd(){
             this.sale();
             this.xsblac();
-        }
+        },
+        OrderDetail(id){
+            this.ordersdetail = true;
+            let newthis = this;
+            var url = '/selectOrderByCid';
+            $.ajax({
+                type: 'POST',
+                url: url,
+                data: {'id':id},
+                dataType: 'json',
+                success: function (result) {
+                    newthis.tableDataorder=result;
+                },
+                error: function () {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+
+        },
     }
 })

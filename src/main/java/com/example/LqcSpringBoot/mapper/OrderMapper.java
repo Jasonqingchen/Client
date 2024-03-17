@@ -16,4 +16,5 @@ public interface OrderMapper extends BaseMapper<Orders> {
 
     List<Map<String,Object>> selectxsblance(String month, String ssxs);
     Integer selectTjdataB();
+    List<Orders> selectOrderByCid(String id);
 }

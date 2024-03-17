@@ -290,7 +290,7 @@
                         </template>
                     </el-table-column>
                     <el-table-column
-                            align="right" fixed="right" width="300"><!--
+                            align="right" fixed="right" width="400"><!--
                         <template slot="header" slot-scope="scope" >
                             <el-input
                                     v-model="search"
@@ -298,9 +298,9 @@
                                     placeholder="输入关键字搜索"/>
                         </template>-->
                         <template slot-scope="scope">
-                            <!--<el-button
+                            <el-button
                                     size="mini"
-                                    @click="handleEdit(scope.$index, scope.row)">Edit</el-button>-->
+                                    @click="OrderDetail(scope.row.id)">OrderDetail</el-button>
                             <el-button
                                     size="mini"
                                     type="danger"
@@ -330,6 +330,76 @@
                     </el-pagination>
                 </div>
             </template>
+    <!--orders detail -->
+    <el-dialog
+            title="orders detail"
+            :visible.sync="ordersdetail"
+            width="80%">
+        <template>
+            <el-table
+                    :data="tableDataorder"
+                    border
+                    height="400"
+                    style="width: 100%">
+                <el-table-column
+                        label="ORDER DATE"
+                        prop="date"
+                        type="datetime"
+                        width="200">
+                </el-table-column>
+                <el-table-column
+                        label="NAME"
+                        prop="name"
+                        width="100">
+                </el-table-column>
+                <el-table-column
+                        label="PHONE"
+                        prop="phone"
+                        width="200">
+                </el-table-column>
+                <el-table-column
+                        label="TOTAL"
+                        prop="money"
+                        width="80">
+                </el-table-column>
+                <el-table-column
+                        label="BALANCE"
+                        prop="blance"
+                        width="100">
+                    <template slot-scope="scope">
+                        <span style="color: #930707;"><strong>{{scope.row.balance}}</strong></span>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                        label="所属销售"
+                        prop="ssxs"
+                        width="60">
+                </el-table-column>
+                <el-table-column
+                        label="月份"
+                        prop="month"
+                        width="60">
+                </el-table-column>
+                <el-table-column
+                        label="支付金额"
+                        prop="pay"
+                        width="60">
+                </el-table-column>
+                <el-table-column
+                        label="备注"
+                        prop="bz"
+                        width="400">
+                    <template slot-scope="scope">
+                        <span style="color: #930707;">{{scope.row.bz}}</span>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </template>
+
+        <span slot="footer" class="dialog-footer">
+            <el-button @click="ordersdetail = false">return</el-button>
+        </span>
+    </el-dialog>
     <!-- follow tetail-->
     <el-dialog
             title="follow tetail"

@@ -126,6 +126,13 @@ public class Controller {
         return list;
     }
 
+    @RequestMapping("/selectOrderByCid")
+    @ResponseBody
+    public List<Orders> selectOrderByCid(Client client) {
+        List<Orders> cli = orderMapper.selectOrderByCid(client.getId());
+        return cli;
+    }
+
     /**
      * 后台保存
      */

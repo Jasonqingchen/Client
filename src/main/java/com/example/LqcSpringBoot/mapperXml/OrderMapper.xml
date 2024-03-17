@@ -70,4 +70,9 @@
   <select id="selectTjdataB" resultType="java.lang.Integer">
     SELECT sum(balance) as b from orders
   </select>
+
+  <select id="selectOrderByCid" resultMap="BaseResultMap">
+    select * from orders as ss where ss.cid = #{id}
+  </select>
+
 </mapper>
