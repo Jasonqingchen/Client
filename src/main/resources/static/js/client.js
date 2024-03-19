@@ -73,7 +73,7 @@ new Vue({
 
     //初始化
     mounted: function () {
-
+        this.rlt();
         this.xsblac();
         this.sale();
         setTimeout(this.delayedExecution, 1000);
@@ -748,6 +748,75 @@ new Vue({
                     return false;
                 }
             });
+
+        },
+        //热力图
+        rlt(){
+            var url = '/rltjk';
+            $.ajax({
+                type: 'POST',
+                url: url,
+                dataType: 'json',
+                success: function (result) {
+
+                    var chartDom = document.getElementById('rlt');
+                    var myChart = echarts.init(chartDom);
+                    var option;
+
+                    function getVirtualData(year) {
+                        const date = +echarts.time.parse(year + '-01-01');
+                        const end = +echarts.time.parse(+year + 1 + '-01-01');
+                        const dayTime = 3600 * 24 * 1000;
+                        const data = [
+                        ];
+                        for(var i=0;i<result.length;i++){
+                            data.push(result[i]);
+                        }
+                        return data;
+                    }
+                    option = {
+                        title: {
+                            top: 30,
+                            left: 'center',
+                            text: '年度销售热力图'
+                        },
+                        tooltip: {},
+                        visualMap: {
+                            min: 0,
+                            max: 30000,
+                            type: 'piecewise',
+                            orient: 'horizontal',
+                            left: 'center',
+                            top: 65
+                        },
+                        calendar: {
+                            top: 120,
+                            left: 30,
+                            right: 30,
+                            cellSize: ['auto', 13],
+                            range: '2024',
+                            itemStyle: {
+                                borderWidth: 0.5
+                            },
+                            yearLabel: { show: false }
+                        },
+                        series: {
+                            type: 'heatmap',
+                            coordinateSystem: 'calendar',
+                            data: getVirtualData('2024')
+                        }
+                    };
+
+                    myChart.setOption(option);
+
+                },
+                error: function () {
+                    console.log('error submit!!');
+                    return false;
+                }
+            });
+
+
 
         },
     }

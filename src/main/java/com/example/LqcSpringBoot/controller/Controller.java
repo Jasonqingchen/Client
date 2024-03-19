@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.swing.text.html.Option;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -37,7 +38,24 @@ public class Controller {
     @Autowired
     private OrderMapper orderMapper;
 
-
+    /**
+     * 热力图
+     *
+     * @return
+     */
+    @RequestMapping("/rltjk")
+    @ResponseBody
+    public List<List<Object>> rltjk() {
+        List liss = new ArrayList();
+        List<Orders> lis = orderMapper.selectRlt();
+        lis.forEach(l->{
+            List<Object> lll = new ArrayList();
+            lll.add(l.getDate());
+            lll.add(Double.parseDouble(l.getMoney()));
+            liss.add(lll);
+        });
+        return liss;
+    }
     /**
      * 月统计数据
      *

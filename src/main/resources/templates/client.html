@@ -147,6 +147,7 @@
             <div id="sa" style="height: 300px; width: 100%"></div>
         </div></el-col>
     </el-row>
+    <div id="rlt" style="width: 100%;height: 250px;"></div>
     <!-- 搜索栏目-->
             <el-form ref="forms" :model="forms" label-width="100px">
                 <el-row :gutter="20">
@@ -290,29 +291,33 @@
                         </template>
                     </el-table-column>
                     <el-table-column
-                            align="right" fixed="right" width="400"><!--
+                            align="right" fixed="right" width="350"><!--
                         <template slot="header" slot-scope="scope" >
                             <el-input
                                     v-model="search"
                                     size="mini"
                                     placeholder="输入关键字搜索"/>
                         </template>-->
+
                         <template slot-scope="scope">
-                            <el-button
-                                    size="mini"
-                                    @click="OrderDetail(scope.row.id)">OrderDetail</el-button>
-                            <el-button
-                                    size="mini"
-                                    type="danger"
-                                    @click="rowDelete(scope.row.id)">Delete</el-button>
-                            <el-button
-                                    size="mini"
-                                    type="primary"
-                                    @click="gj(scope.row.id)">Follow</el-button>
-                            <el-button
-                                    size="mini"
-                                    type="warning"
-                                    @click="getorder(scope.row.id)">new Order</el-button>
+                            <el-button-group>
+                                <el-button
+                                        size="mini"
+                                        @click="OrderDetail(scope.row.id)">OrderDetail</el-button>
+                                <el-button
+                                        size="mini"
+                                        type="danger"
+                                        @click="rowDelete(scope.row.id)">Delete</el-button>
+                                <el-button
+                                        size="mini"
+                                        type="primary"
+                                        @click="gj(scope.row.id)">Follow</el-button>
+                                <el-button
+                                        size="mini"
+                                        type="warning"
+                                        @click="getorder(scope.row.id)">new Order</el-button>
+                            </el-button-group>
+
                         </template>
                     </el-table-column>
                 </el-table>
