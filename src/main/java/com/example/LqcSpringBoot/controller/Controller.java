@@ -64,6 +64,10 @@ public class Controller {
         @RequestMapping("/xsqk")
         @ResponseBody
         public List<Map<String,Object>> xsqk(Orders order) {
+            if(order.getDate()=="" || order.getDate()==null){
+                SimpleDateFormat formatm = new SimpleDateFormat("MM");
+                order.setDate(formatm.format(new Date()));
+            }
             return orderMapper.selectxsblance(order.getDate(),order.getSsxs());
         }
     /**

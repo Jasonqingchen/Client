@@ -17,7 +17,16 @@
 
   <!--查询数据-->
   <select id="selectDataByDateAndSsxs" resultType="java.lang.String">
-    select `name` from orders   where month='03' and ssxs = 'jason' GROUP BY `name`
+    select `name` from orders   where
+                                    1=1
+    <if test="month != null and month != ''">
+      AND month =#{month}
+    </if>
+
+    <if test="ssxs != null and ssxs != ''">
+      AND ssxs =#{ssxs}
+    </if>
+    GROUP BY `name`
   </select>
   <!--查询数据-->
   <select id="selectDataByDateAndSsxssales" resultType="java.lang.String">
